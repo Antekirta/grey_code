@@ -15,7 +15,7 @@ namespace Grey_Code
         { 
             get
             {
-                return String.Join("", realSubset.Select(item => item.ToString()).ToArray()); 
+                return String.Join(" ", realSubset.Select(item => item.ToString()).ToArray()); 
             }
         }
 
