@@ -63,9 +63,6 @@ namespace Grey_Code
             }
 
             return subset.ToArray();
-
-            // mock
-            // return "1489";
         }
 
         /**

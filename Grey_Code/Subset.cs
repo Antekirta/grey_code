@@ -19,6 +19,14 @@ namespace Grey_Code
             }
         }
 
+        public string FullInfo
+        {
+            get
+            {
+                return index + " " + bitScale + " " + RealSubset;
+            }
+        }
+
         public Subset(int index, string bitScale, int[] realSubset)
         {
             this.index = index;

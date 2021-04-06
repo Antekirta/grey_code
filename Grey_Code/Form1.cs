@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -31,7 +32,14 @@ namespace Grey_Code
 
             bitScale.Init(elems.ToArray());
 
-            SetupTable(bitScale);
+            Subset[] subsets = bitScale.BuildSubsets();
+           
+            SetupTable(subsets);
+
+            if (elems.Count > 4)
+            {
+                WriteListToFile(subsets);
+            }
         }
 
         private List<int> PrepareSetElements(string rawString)
@@ -52,9 +60,32 @@ namespace Grey_Code
             return elems;
         }
 
-        private void SetupTable(BitScale bitScale)
+        private void WriteListToFile(Subset[] subsets)
         {
-            dataGrid.DataSource = bitScale.BuildSubsets();
+            DirectoryInfo dirInfo = new(AppDomain.CurrentDomain.BaseDirectory);
+
+            string fileName = dirInfo.FullName + "subsets.txt";
+
+            try
+            {
+                using (StreamWriter sw = new StreamWriter(fileName, false, System.Text.Encoding.Default))
+                {
+                    foreach (Subset subset in subsets)
+                    {
+                        sw.WriteLine(subset.FullInfo);
+                    }
+                }
+
+                MessageBox.Show("Список подможеств сохранен в файле " + fileName);
+            } catch
+            {
+                MessageBox.Show("Не удалось сохранить файл " + fileName);
+            }
+        }
+
+        private void SetupTable(Subset[] subsets)
+        {
+            dataGrid.DataSource = subsets;
 
             if (!dataTableIsSet)
             {
@@ -66,6 +97,8 @@ namespace Grey_Code
 
                 dataGrid.Columns[2].HeaderText = "Соответствующее подмножество";
                 dataGrid.Columns[2].Width = 190;
+
+                dataGrid.Columns[3].Visible = false;
 
                 dataTableIsSet = true;
             }
