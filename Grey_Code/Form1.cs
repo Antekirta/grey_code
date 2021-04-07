@@ -1,15 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-
 
 namespace Grey_Code
 {
@@ -22,10 +16,13 @@ namespace Grey_Code
             InitializeComponent();
         }
 
+        // обработаем клик на кнопку "Сгенерировать подмножества"
         private void OnButtonClick(object sender, EventArgs e)
         {
+            // подготовим сырые данные, полученные из пользовательского ввода
             List<int> elems = PrepareSetElements(setElementsTextBox.Text);
 
+            // заменим введенные пользователем данные на очищенные
             setElementsTextBox.Text = String.Join(" ", elems);
 
             BitScale bitScale = new();
@@ -36,6 +33,7 @@ namespace Grey_Code
            
             SetupTable(subsets);
 
+            // записываем в файл, только если число подмножеств больше 15
             if (elems.Count > 4)
             {
                 WriteListToFile(subsets);
@@ -44,30 +42,37 @@ namespace Grey_Code
 
         private List<int> PrepareSetElements(string rawString)
         {
+            // форматируем строку
             string[] rawElements = FormatString(setElementsTextBox.Text).Split(' ');
 
             List<int> elems = new();
 
+            // добавляем в список элементов множества только числа
             foreach (string rawElem in rawElements)
             {
                 if (int.TryParse(rawElem, out int num)) elems.Add(num);
             }
 
+            // сортируем
             elems.Sort();
 
+            // убираем дубликаты
             elems = elems.Distinct().ToList();
 
             return elems;
         }
 
+        // записываем подмножества в файл
         private void WriteListToFile(Subset[] subsets)
         {
+            // получаем информацию о текущей папке
             DirectoryInfo dirInfo = new(AppDomain.CurrentDomain.BaseDirectory);
 
             string fileName = dirInfo.FullName + "subsets.txt";
 
             try
             {
+                // записываем элементы списка в файл
                 using (StreamWriter sw = new StreamWriter(fileName, false, System.Text.Encoding.Default))
                 {
                     foreach (Subset subset in subsets)
@@ -104,6 +109,7 @@ namespace Grey_Code
             }
         }
 
+        // убираем лишние пробелы
         private static string FormatString(string str)
         {
             string formattedString;
